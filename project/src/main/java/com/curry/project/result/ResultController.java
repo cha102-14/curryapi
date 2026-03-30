@@ -2,12 +2,14 @@ package com.curry.project.result;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Tag(name="Curry",description = "測驗結果相關API")
@@ -25,12 +27,16 @@ public class ResultController {
         return "Success"; // 儲存後重定向到分享頁面
     }
 
-//    @Operation(summary = "匯出Excel", description = "匯出Excel")
-//    @GetMapping("/results/exportExcel")
-//    public String exportExcel() {
-//        List<ResultVo> resultVoList = resultService.findAllResults();
-//
-//    }
+    @Operation(summary = "匯出Excel", description = "匯出Excel")
+    @GetMapping("/results/exportExcel")
+    public void exportExcel(HttpServletResponse response) {
+        try {
+            resultService.exportExcel(response);
+        } catch (IOException e) {
+            // 這裡可以導向錯誤處理或回傳 JSON 錯誤訊息
+            e.printStackTrace();
+        }
+    }
 
 
 //    @GetMapping("/share")
