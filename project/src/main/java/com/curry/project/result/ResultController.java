@@ -14,7 +14,12 @@ import java.util.List;
 
 @Tag(name="Curry",description = "測驗結果相關API")
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {
+        "http://localhost:3000",
+        "https://curryui.vercel.app",
+        "https://housefindyourcurry.tw",
+        "https://test.housefindyourcurry.tw"
+})
 public class ResultController {
 
     @Autowired

@@ -44,7 +44,7 @@ public class ResultService {
 
                 SXSSFSheet sheettt = workbook.createSheet("測驗結果");
 
-            String[] columnNames = {"暱稱", "性別","年齡", "答案1", "答案2", "答案3", "答案4", "答案5","答案6","測驗結果","建立時間"};
+            String[] columnNames = {"序號","暱稱", "性別","年齡", "答案1", "答案2", "答案3", "答案4", "答案5","答案6","測驗結果","建立時間"};
             SXSSFRow headerRow =  sheettt.createRow(0);
             for (int i = 0; i < columnNames.length; i++) {
                 headerRow.createCell(i).setCellValue(columnNames[i]);
@@ -56,21 +56,23 @@ public class ResultService {
             String[] ageMap = {"17歲以下","18-25歲","26-35歲","36-45歲","46-55歲","56-65歲","66歲以上"};
             for (ResultVo result : results) {
                 SXSSFRow row = (SXSSFRow) sheettt.createRow(rowNum++);
-                row.createCell(0).setCellValue(result.getUserName());
+                Integer index = rowNum-1;
+                row.createCell(0).setCellValue(index);
+                row.createCell(1).setCellValue(result.getUserName());
                 Integer genderValue = result.getGender();
                 String genderText = (genderValue != null && genderValue >= 1 && genderValue <= 3) ? genderMap[genderValue - 1] : "未知";
-                row.createCell(1).setCellValue(genderText);
+                row.createCell(2).setCellValue(genderText);
                 Integer ageValue = result.getAge();
                 String ageText = (ageValue != null && ageValue >= 1 && ageValue <= 7) ? ageMap[ageValue - 1] : "未知";
-                row.createCell(2).setCellValue(ageText);
-                row.createCell(3).setCellValue(result.getAns1());
-                row.createCell(4).setCellValue(result.getAns2());
-                row.createCell(5).setCellValue(result.getAns3());
-                row.createCell(6).setCellValue(result.getAns4());
-                row.createCell(7).setCellValue(result.getAns5());
-                row.createCell(8).setCellValue(result.getAns6());
-                row.createCell(9).setCellValue(result.getResultName());
-                Cell dateCell = row.createCell(10);
+                row.createCell(3).setCellValue(ageText);
+                row.createCell(4).setCellValue(result.getAns1());
+                row.createCell(5).setCellValue(result.getAns2());
+                row.createCell(6).setCellValue(result.getAns3());
+                row.createCell(7).setCellValue(result.getAns4());
+                row.createCell(8).setCellValue(result.getAns5());
+                row.createCell(9).setCellValue(result.getAns6());
+                row.createCell(10).setCellValue(result.getResultName());
+                Cell dateCell = row.createCell(11);
                 if (result.getCreatedTime() != null) {
                     // 格式化為字串，安全又美觀
                     dateCell.setCellValue(result.getCreatedTime().format(formatter));
