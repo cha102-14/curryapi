@@ -36,10 +36,6 @@ public class ResultService {
     @Autowired
     private JavaMailSender mailSender;
 
-    // 根據 ID 取得結果
-//    public ResultVo getResultById(String id) {
-//        return repository.findById(id).orElse(null);
-//    }
 
     @Transactional
     public ResultVo saveResult(ResultVo result) {
@@ -90,28 +86,20 @@ public class ResultService {
                 Cell dateCell = row.createCell(11);
                 if (result.getCreatedTime() != null) {
                     // 格式化為字串，安全又美觀
-                    dateCell.setCellValue(result.getCreatedTime().plusHours(8).format(formatter));
+                    dateCell.setCellValue(result.getCreatedTime().atZoneSameInstant(ZoneId.of("Asia/Taipei")).format(formatter));
+//                    dateCell.setCellValue(result.getCreatedTime().plusHours(8).format(formatter));
+
                 } else {
                     dateCell.setCellValue("-"); // 或留白
                 }
             }
-//            String dateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-//            String fileName = "饋咖測驗遊戲活動頁專案-測驗結果" + dateStr + ".xlsx";
-
-            // 2. 進行 URL 編碼，防止中文亂碼
-//            String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString())
-//                    .replaceAll("\\+", "%20"); // 處理空格變 + 號的問題
-
-            // 3. 設定正確的 Content-Disposition (支援現代瀏覽器)
-//            response.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + encodedFileName);
-//            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             workbook.write(bos);
             excelContent = bos.toByteArray();
             workbook.dispose(); // 清理暫存檔
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-        helper.setTo("feal1221@gmail.com");
+        helper.setTo("riva.wang@creca.com.tw");
         helper.setSubject("饋咖測驗遊戲活動頁專案－測驗結果excel");
         helper.setText("您好，附件為本次活動的測驗結果 Excel 檔案，請查收。");
         String dateStr = LocalDate.now(ZoneId.of("Asia/Taipei")).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
@@ -122,18 +110,5 @@ public class ResultService {
         }catch (Exception e){
             System.err.println("郵件寄送失敗: " + e.getMessage());
         }
-
-
     }
-    // 模擬存入測驗結果的方法（實際測驗結束後會呼叫這個）
-//    public UUID saveResult(String flowerName, String imgUrl) {
-//        ResultVo result = new ResultVo();
-//        result.setId(java.util.UUID.randomUUID());
-//        result.setResultName(flowerName);
-//        result.setImageUrl(imgUrl);
-//        result.setDescription("我是" + flowerName + "，一起來測你是哪種花朵?");
-//
-//        repository.save(result);
-//        return result.getId();
-//    }
 }
