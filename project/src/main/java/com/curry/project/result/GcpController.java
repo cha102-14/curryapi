@@ -23,7 +23,7 @@ public class GcpController {
 
 
     // 建議定義在 application.properties 中，不要寫死在程式碼
-    @Value("${app.internal.secret:my-super-secret-key}")
+    @Value("${app.internal.secret}")
     private String internalSecret;
 
     @PostMapping("/monthly-export")
