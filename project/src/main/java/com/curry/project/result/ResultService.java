@@ -63,15 +63,26 @@ public class ResultService {
             // 取得所有資料用於 Excel
             List<ResultVo> results = repository.findAll();
             
-            // 計算本周新增筆數 (從上周一 00:00:00 到現在)
+            // 取得當下台北時間
             OffsetDateTime now = OffsetDateTime.now(ZoneId.of("Asia/Taipei"));
-            OffsetDateTime lastMondayStart = now.minusWeeks(1)
-                    .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+            
+            // 計算本週一 00:00:00 作為結束時間 (避免算到週一 00:00~08:00，下週執行時又重複計算)
+            OffsetDateTime thisMondayStart = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
                     .toLocalDate()
                     .atStartOfDay(ZoneId.of("Asia/Taipei"))
                     .toOffsetDateTime();
+                    
+            // 計算上週一 00:00:00 作為起始時間
+            OffsetDateTime lastMondayStart = thisMondayStart.minusWeeks(1);
             
-            List<ResultVo> weeklyResults = repository.findByCreatedTimeBetweenOrderByCreatedTimeAsc(lastMondayStart, now);
+            // 配合資料庫時間是 +0 (UTC)，將查詢區間時間明確轉換為 UTC (+0)
+            OffsetDateTime startUtc = lastMondayStart.withOffsetSameInstant(java.time.ZoneOffset.UTC);
+            OffsetDateTime endUtc = thisMondayStart.withOffsetSameInstant(java.time.ZoneOffset.UTC);
+            
+            // 由於 between 預設為包含上下界 (<= end)，為了嚴謹，將結束時間扣減1毫秒，變為週日 23:59:59.999
+            endUtc = endUtc.minus(1, java.time.temporal.ChronoUnit.MILLIS);
+
+            List<ResultVo> weeklyResults = repository.findByCreatedTimeBetweenOrderByCreatedTimeAsc(startUtc, endUtc);
             int weeklyCount = weeklyResults.size();
 
             int rowNum = 1;
