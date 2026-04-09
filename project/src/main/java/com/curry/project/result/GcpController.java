@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = {
         "http://localhost:3000",
         "https://curryui.vercel.app",
-        "https://housefindyourcurry.tw",
+        "https://www.housefindyourcurry.tw",
         "https://test.housefindyourcurry.tw",
         "https://api.housefindyourcurry.tw",
         "https://hello-world-1-xm5omx4rva-de.a.run.app"
