@@ -3,10 +3,11 @@ package com.curry.project.result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
-
+@Slf4j
 @Tag(name="GCP",description = "限定GCP才能用")
 @RestController
 @CrossOrigin(origins = {
@@ -32,11 +33,14 @@ public class GcpController {
             @RequestHeader(value = "X-Internal-Secret", required = false) String incomingSecret
     ) {
         if (incomingSecret == null || !incomingSecret.equals(internalSecret)) {
+            log.warn("未經授權的仿偽:"+incomingSecret);
             return "未經授權的訪問";
         }
         try {
             resultService.exportExcel();
+            log.info("排程任務已成功啟動");
         } catch (Exception e) {
+            log.error("執行導出任務時發生錯誤: ", e);
             // 這裡可以導向錯誤處理或回傳 JSON 錯誤訊息
             e.printStackTrace();
         }
